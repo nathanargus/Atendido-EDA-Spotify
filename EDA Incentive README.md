@@ -354,3 +354,117 @@ plt.show()
 In this section, we will analyze the popularity of tracks across different music streaming platforms: Spotify, Deezer, and Apple Music. By comparing the number of tracks listed on these platforms, we can identify trends in platform usage and determine which platform tends to feature the most popular tracks. This analysis will provide insights into user preferences and the distribution of music across these major streaming services. You can see the function and output below.
 
 - How do the numbers of tracks in spotify_playlists, deezer_playlist, and apple_playlists compare? Which platform seems to favor the most popular tracks?
+
+```python
+
+# Define the platforms to sum
+platforms = ['in_spotify_playlists', 'in_spotify_charts', 
+             'in_apple_playlists', 'in_apple_charts', 
+             'in_deezer_playlists', 'in_deezer_charts', 
+             'in_shazam_charts']
+
+# Sum the number of tracks for each platform, ensuring numeric conversion
+track_counts = [pd.to_numeric(df[platform], errors='coerce').sum() for platform in platforms]
+
+# Create the bar graph
+plt.figure(figsize=(15, 6))
+bars = plt.bar(platforms, track_counts, color=['#EAB8E4', '#B8EABE', '#dd8dd4', '#8DDD96', '#d266c5', '#66D273', '#922b85'])
+
+# Add labels on top of the bars
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, yval, int(yval), va='bottom', ha='center')
+
+plt.xlabel('Streaming Platforms')
+plt.ylabel('Number of Tracks')
+plt.title('Comparison of Tracks in Different Streaming Platforms')
+
+# Define new labels for the x-axis
+new_labels = ['Spotify Playlists', 'Spotify Charts', 'Apple Playlists', 
+              'Apple Charts', 'Deezer Playlists', 'Deezer Charts', 
+              'Shazam Charts']
+
+plt.xticks(ticks=range(len(new_labels)), labels=new_labels, rotation=45)  # Use new labels for easier understanding and readability
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+```
+
+![image](https://github.com/user-attachments/assets/f6dd1257-b0af-4f00-a6cb-55a65bb1c3c5)
+
+#### Key Insights:
+
+- __Platform Comparison for Popular Tracks__: __Spotify playlists__ contain the highest number of tracks (__4,955,719__), followed by __Deezer playlists__ (__95,913__) and __Apple playlists__ (__64,625__). This indicates that Spotify supports the largest catalog of popular tracks, likely due to its wide user base and market dominance. Additionally, __Spotify Charts__ contain __11,445 tracks__, while __Apple Charts__ include __49,469__, highlighting both platforms' commitment to popular music. In contrast, __Deezer Charts__ and __Shazam Charts__ have fewer entries, with __2,541__ and __45,854__ tracks respectively, reinforcing Spotify’s position as the platform most inclined toward favoring a wide array of popular tracks.
+
+---
+
+### Advanced Analysis
+
+In this section, we will explore the relationship between musical elements such as key and mode (Major vs. Minor) with streaming patterns, particularly focusing on the popularity of tracks. Additionally, we will investigate whether specific genres or artists are more prevalent in playlists and charts. By analyzing the data, we aim to uncover any consistent trends or notable differences among the most frequently appearing artists across various streaming platforms. This analysis will provide insights into how musical characteristics and artist popularity influence listener engagement. You can see the function and output below.
+
+- Based on the streams data, can you identify any patterns among tracks with the same key or mode (Major vs. Minor)?
+- Do certain genres or artists consistently appear in more playlists or charts? Perform an analysis to compare the most frequently appearing artists in playlists or charts.
+
+```python
+
+# Group the data by key and sum the streams
+key_counts = df.groupby('key')['streams'].sum()
+
+# Arrange keys including sharps
+key_order = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+key_counts = key_counts.reindex(key_order)
+
+# Filter out zero counts
+key_counts = key_counts[key_counts > 0]
+
+# Create a bar graph for key vs streams
+plt.figure(figsize=(15, 6))
+bars = key_counts.plot(kind='bar', color='#EAB8E4', alpha=1)
+plt.title('Total Streams by Key')
+plt.xlabel('Keys')
+plt.ylabel('Total Streams')
+plt.xticks(rotation=0)
+
+# Add the value of each bar, excluding zeros
+for bar in bars.patches:
+    plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), 
+             round(bar.get_height()), ha='center', va='bottom', fontsize=11)
+
+plt.tight_layout()
+plt.show()
+
+# Group the data by mode (Major vs Minor) and sum the streams, excluding zeros
+mode_counts = df.groupby('mode')['streams'].sum()
+
+# Create a bar graph for mode vs streams
+plt.figure(figsize=(15, 6))
+bars_mode = mode_counts[mode_counts > 0].plot(kind='bar', color='#EAB8E4', alpha=1)
+plt.title('Total Streams by Mode (Major vs Minor)')
+plt.xlabel('Mode')
+plt.ylabel('Total Streams')
+plt.xticks(rotation=0)
+
+# Add the value of each bar, excluding zeros
+for bar in bars_mode.patches:
+    if bar.get_height() > 0:  # Only add text for bars greater than 0
+        plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), 
+                 round(bar.get_height()), ha='center', va='bottom', fontsize=11)
+
+plt.tight_layout()
+plt.show()
+
+```
+
+<div style="display: flex;">
+  <img src="https://github.com/user-attachments/assets/928c9c77-a1b4-4841-b379-0974bad6739a" width="300" height="200" style="width: 49%; margin-right: 5%;">
+  <img src="https://github.com/user-attachments/assets/4845fcc9-3648-43ab-8ceb-872d9cc09193" width="300" height="200" style="width: 49%; margin-right: 5%;">
+</div>
+
+#### Key Insights:
+
+- __Key Preference__:  The barplot shows that songs in the __key of C__ are the most preferred by listeners, followed by tracks in __G, G#__, and __D__. This trend suggests a listener preference for these particular musical keys in the sample population.
+- __Mode Preference__: The data reveals a stronger preference for tracks in __Major__ mode, as these tracks have significantly higher stream counts compared to those in Minor mode. This suggests that listeners are more inclined to favor tracks with a Major tonality, which might be perceived as more uplifting or accessible.
+
+```python
+
