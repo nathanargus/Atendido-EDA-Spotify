@@ -61,11 +61,20 @@ for column, count in missing_values.items():
 
 ![image](https://github.com/user-attachments/assets/37ea0d48-4b23-4e2a-944a-6d9d47ec7d7b)
 
+To ensure data integrity and prevent errors during analysis, missing values were filled with zeros. This method allows for consistent calculations and visualizations without omitting any entries, maintaining the usability of the dataset. The function can be seen below.
+
+```python
+
+# Fill missing values with zero
+df.fillna(0, inplace=True)
+
+```
+
 #### Key Insights:
 
 - __Dataset Structure__: The dataset contains __953 rows__ and __24 columns__, indicating a substantial amount of data on popular songs.
 - __Data Types__: Most columns are numeric (e.g., `int64` for counts and percentages) and categorical (e.g., `object` for strings), which suggests diverse data suitable for various analyses.
-- __Missing Values__: There are __50 missing entries__ in `in_shazam_charts` and __95__ in `key`, indicating potential gaps in data that may affect analysis but can be addressed through imputation or exclusion in specific analyses.
+- __Missing Values__: There are __50 missing entries__ in `in_shazam_charts` and __95__ in `key`. To maintain dataset integrity, these missing values were filled with zeros, ensuring consistent calculations and enabling comprehensive analysis.
 
 ---
 
@@ -90,9 +99,9 @@ median_streams = df['streams'].median()
 std_streams = df['streams'].std()
 
 # Display the results with comma formatting
-print(f"Mean: {mean_streams:,.0f}")
-print(f"Median: {median_streams:,.0f}")
-print(f"Standard Deviation: {std_streams:,.0f}")
+print("Mean:", "{:,.0f}".format(mean_streams))
+print("Median:", "{:,.0f}".format(median_streams))
+print("Standard Deviation:", "{:,.0f}".format(std_streams))
 
 # Set the style of seaborn
 sns.set(style="whitegrid")
@@ -118,13 +127,62 @@ plt.ylabel('Number of Songs')
 plt.tight_layout()
 plt.show()
 
+# Boxplot for Released Year
+plt.figure(figsize=(15, 6))
+sns.boxplot(x=df['released_year'], color='#EAB8E4')
+plt.title('Boxplot of Released Years')
+plt.xlabel('Released Year')
+plt.grid(axis='y')
+plt.show()
+
+# Boxplot for Artist Count
+plt.figure(figsize=(15, 6))
+sns.boxplot(x=df['artist_count'], color='#EAB8E4')
+plt.title('Boxplot of Artist Count')
+plt.xlabel('Number of Artists')
+plt.grid(axis='y')
+plt.show()
+
+# Summary of Outliers
+def summarize_outliers(df, column):
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
+    # Detect outliers
+    outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)][column]
+    num_outliers = outliers.count()
+    outlier_range = (outliers.min(), outliers.max())
+    
+    return num_outliers, outlier_range
+
+# Apply to 'released_year' and 'artist_count'
+released_year_outliers = summarize_outliers(df, 'released_year')
+artist_count_outliers = summarize_outliers(df, 'artist_count')
+
+# Display summary
+print("Released Year:", released_year_outliers[0], "outliers,", "Range:", released_year_outliers[1])
+print("Artist Count:", artist_count_outliers[0], "outliers,", "Range:", artist_count_outliers[1])
+
 ```
+Mean: 513,597,931<br>
+Median: 290,228,626<br>
+Standard Deviation: 566,803,887
 
 <div style="display: flex;">
-  <img src="https://github.com/user-attachments/assets/b4ebf57b-4855-4c87-b4ff-0f7d6c7fe3ca" width="300" height="165" style="width: 33%; margin-right: 5%;">
-  <img src="https://github.com/user-attachments/assets/dd5efde9-75fe-4ff7-9018-3f92b12957a2" style="width: 33%; margin-right: 5%;">
-  <img src="https://github.com/user-attachments/assets/d1581191-0118-45df-bd87-caf41d52485d" style="width: 33%; margin-right: 5%;">
+  <img src="https://github.com/user-attachments/assets/dd5efde9-75fe-4ff7-9018-3f92b12957a2" width="300" height="200" style="width: 49%; margin-right: 5%;">
+  <img src="https://github.com/user-attachments/assets/d1581191-0118-45df-bd87-caf41d52485d" width="300" height="200" style="width: 49%; margin-right: 5%;">
 </div>
+
+<div style="display: flex;">
+  <img src="https://github.com/user-attachments/assets/9257420a-32fc-4b67-8661-47090f4626b2" width="300" height="200" style="width: 49%; margin-right: 5%;">
+  <img src="https://github.com/user-attachments/assets/ef78941a-e00a-4a54-b8e6-e45d030508e5" width="300" height="200" style="width: 49%; margin-right: 5%;">
+</div>
+
+Released Year: 151 outliers, Range: (1930, 2016)<br>
+Artist Count: 27 outliers, Range: (4, 8)
 
 #### Key Insights:
 
