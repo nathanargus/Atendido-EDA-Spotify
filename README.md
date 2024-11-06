@@ -358,17 +358,14 @@ In this section, we will analyze the popularity of tracks across different music
 ```python
 
 # Define the platforms to sum
-platforms = ['in_spotify_playlists', 'in_spotify_charts', 
-             'in_apple_playlists', 'in_apple_charts', 
-             'in_deezer_playlists', 'in_deezer_charts', 
-             'in_shazam_charts']
+platforms = ['in_spotify_playlists', 'in_apple_playlists', 'in_deezer_playlists']
 
 # Sum the number of tracks for each platform, ensuring numeric conversion
 track_counts = [pd.to_numeric(df[platform], errors='coerce').sum() for platform in platforms]
 
 # Create the bar graph
 plt.figure(figsize=(15, 6))
-bars = plt.bar(platforms, track_counts, color=['#EAB8E4', '#B8EABE', '#dd8dd4', '#8DDD96', '#d266c5', '#66D273', '#922b85'])
+bars = plt.bar(platforms, track_counts, color=['#EAB8E4', '#B8EABE', '#dd8dd4'])
 
 # Add labels on top of the bars
 for bar in bars:
@@ -380,9 +377,7 @@ plt.ylabel('Number of Tracks')
 plt.title('Comparison of Tracks in Different Streaming Platforms')
 
 # Define new labels for the x-axis
-new_labels = ['Spotify Playlists', 'Spotify Charts', 'Apple Playlists', 
-              'Apple Charts', 'Deezer Playlists', 'Deezer Charts', 
-              'Shazam Charts']
+new_labels = ['Spotify Playlists', 'Apple Playlists', 'Deezer Playlists']
 
 plt.xticks(ticks=range(len(new_labels)), labels=new_labels, rotation=45)  # Use new labels for easier understanding and readability
 plt.xticks(rotation=45)
@@ -391,7 +386,7 @@ plt.show()
 
 ```
 
-![image](https://github.com/user-attachments/assets/f6dd1257-b0af-4f00-a6cb-55a65bb1c3c5)
+![image](https://github.com/user-attachments/assets/414b7384-d758-42e5-aea4-d073ed5f8da4)
 
 #### Key Insights:
 
