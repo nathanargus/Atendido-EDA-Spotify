@@ -458,7 +458,7 @@ plt.show()
 
 #### Key Insights:
 
-- __Key Preference__:  The barplot shows that songs in the __key of C__ are the most preferred by listeners, followed by tracks in __G, G#__, and __D__. This trend suggests a listener preference for these particular musical keys in the sample population.
+- __Key Preference__:  The barplot shows that songs in the __key of C#__ are the most preferred by listeners, followed by tracks in __G, G#__, and __D__. This trend suggests a listener preference for these particular musical keys in the sample population.
 - __Mode Preference__: The data reveals a stronger preference for tracks in __Major__ mode, as these tracks have significantly higher stream counts compared to those in Minor mode. This suggests that listeners are more inclined to favor tracks with a Major tonality, which might be perceived as more uplifting or accessible.
 
 ```python
