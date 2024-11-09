@@ -463,3 +463,77 @@ plt.show()
 
 ```python
 
+# Load the CSV file with appropriate encoding
+file_path = 'spotify-2023.csv' 
+df = pd.read_csv(file_path, encoding='latin1')
+
+# Define the relevant columns
+artist_column = 'artist(s)_name'
+playlist_columns = ['in_spotify_playlists', 'in_apple_playlists', 'in_deezer_playlists']
+chart_columns = ['in_spotify_charts', 'in_apple_charts', 'in_deezer_charts', 'in_shazam_charts']
+
+# Ensure that the artist column is treated as a string and handle missing values
+df[artist_column] = df[artist_column].fillna('').astype(str)
+
+# Convert playlist and chart columns to numeric, filling errors with zero
+for col in playlist_columns + chart_columns:
+    df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
+# Mark rows as playlist or chart entries based on whether they have non-zero counts in playlist or chart columns
+df['is_playlist'] = df[playlist_columns].sum(axis=1) > 0
+df['is_chart'] = df[chart_columns].sum(axis=1) > 0
+
+# Separate and count artists for playlists
+playlist_artist_counts = (
+    df[df['is_playlist']][artist_column]
+    .str.split(',')
+    .explode()
+    .str.strip()
+    .value_counts()
+    .head(5)
+)
+
+# Separate and count artists for charts
+chart_artist_counts = (
+    df[df['is_chart']][artist_column]
+    .str.split(',')
+    .explode()
+    .str.strip()
+    .value_counts()
+    .head(5)
+)
+
+# Set color for consistency
+color_code = '#EAB8E4'
+
+# Plotting the data for playlists
+plt.figure(figsize=(10, 5))
+sns.barplot(x=playlist_artist_counts.values, y=playlist_artist_counts.index, color=color_code)
+plt.xlabel('Total Playlist Count', fontsize=14)
+plt.ylabel('Artist', fontsize=14)
+plt.title('Top 5 Artists in Total Playlists', fontsize=16, fontweight='semibold')
+for i, v in enumerate(playlist_artist_counts):
+    plt.text(v + 0.02 * max(playlist_artist_counts), i, f"{v:,}", va='center', fontsize=10)
+plt.show()
+
+# Plotting the data for charts
+plt.figure(figsize=(10, 5))
+sns.barplot(x=chart_artist_counts.values, y=chart_artist_counts.index, color=color_code)
+plt.xlabel('Total Chart Count', fontsize=14)
+plt.ylabel('Artist', fontsize=14)
+plt.title('Top 5 Artists in Total Charts', fontsize=16, fontweight='semibold')
+for i, v in enumerate(chart_artist_counts):
+    plt.text(v + 0.02 * max(chart_artist_counts), i, f"{v:,}", va='center', fontsize=10)
+plt.show()
+
+```
+
+<div style="display: flex;">
+  <img src="https://github.com/user-attachments/assets/893b9f93-921c-466d-bb61-352b3e1006b2" width="300" height="200" style="width: 49%; margin-right: 5%;">
+  <img src="https://github.com/user-attachments/assets/1f8de7f4-fd50-4db0-af2f-f41b1a243eb5" width="300" height="200" style="width: 49%; margin-right: 5%;">
+</div>
+
+#### Key Insights:
+
+- __Most Frequently Appearing Artists__: __Bad Bunny, Taylor Swift__, and __The Weeknd__ consistently appear as the top three artists across both playlists and charts. __Bad Bunny__ leads with __40__ appearances in playlists and charts, followed closely by Taylor Swift and The Weeknd, each with __37__ or more appearances. This suggests that these artists are highly favored and frequently included across various platforms.
+- __Genre Influence on Popularity__: Although specific genres are not highlighted in these charts, the prominence of these artists suggests that genres associated with pop, reggaeton, and R&B may have higher representation and popularity within playlists and charts.
